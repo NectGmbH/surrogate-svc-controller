@@ -1,0 +1,8 @@
+replicas: 1
+image: 'kavatech/surrogate-svc-controller:v0.1.0'
+label: '' # failure-domain.beta.kubernetes.io/zone
+debug: false
+namespace: '' # empty namespace means all namespaces
+tag: '' # user defined annotation/label for considering services. If not specified, all services will be considered.
+suffixes: {}
+#  germany-north-hh=hh

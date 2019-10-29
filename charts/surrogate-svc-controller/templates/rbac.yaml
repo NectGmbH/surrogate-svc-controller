@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "surrogate-svc-controller-{{ .Release.Name }}"
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- if .Values.namespace }}
+kind: Role
+{{- else }}
+kind: ClusterRole
+{{- end }}
+metadata:
+  name: "surrogate-svc-controller-{{ .Release.Name }}"
+rules:
+- apiGroups:
+  - ''
+  resources:
+  - services
+  - endpoints
+  verbs:
+  - list
+  - update
+  - create
+  - get
+  - watch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+{{- if .Values.namespace }}
+kind: RoleBinding
+{{- else }}
+kind: ClusterRoleBinding
+{{- end }}
+metadata:
+  name: "surrogate-svc-controller-{{ .Release.Name }}"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  {{- if .Values.namespace }}
+  kind: Role
+  {{- else }}
+  kind: ClusterRole
+  {{- end }}
+  name: "surrogate-svc-controller-{{ .Release.Name }}"
+subjects:
+- kind: ServiceAccount
+  name: "surrogate-svc-controller-{{ .Release.Name }}"
+  namespace: {{ .Release.Namespace | quote }}

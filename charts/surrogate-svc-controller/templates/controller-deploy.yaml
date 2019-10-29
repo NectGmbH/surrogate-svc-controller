@@ -1,0 +1,36 @@
+  
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: surrogate-svc-controller
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      name: surrogate-svc-controller
+  template:
+    metadata:
+      labels:
+        name: surrogate-svc-controller
+    spec:
+      serviceAccountName: "surrogate-svc-controller-{{ .Release.Name }}"
+      containers:
+      - name: surrogate-svc-controller
+        image: '{{ .Values.image }}'
+        imagePullPolicy: Always
+        args:
+        - '-label'
+        - '{{.Values.label}}'
+        - '-namespace'
+        - '{{.Values.namespace}}'
+        {{- if .Values.debug }}
+        - '-debug'
+        {{- end}}
+        {{- if .Values.tag }}
+        - '-tag'
+        - '{{.Values.tag}}'
+        {{- end}}
+        {{- range $key, $value := .Values.suffixes }}
+        - '-suffix'
+        - '{{ $key }}={{ $value }}'
+        {{- end }}
